@@ -12,7 +12,7 @@ interface NoticeProps {
 const TONE_STYLES: Record<Tone, string> = {
   success: "border-emerald-200 bg-emerald-50 text-emerald-900",
   error: "border-rose-200 bg-rose-50 text-rose-900",
-  info: "border-sky-200 bg-sky-50 text-sky-900",
+  info: "border-teal-200 bg-teal-50 text-teal-900",
 };
 
 const TONE_ICONS: Record<Tone, string> = {

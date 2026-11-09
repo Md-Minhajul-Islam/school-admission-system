@@ -28,13 +28,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen pb-12">
-      <header className="border-b border-slate-200/80 bg-white/85 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-col gap-5 px-4 py-5 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-sky-500 text-sm font-black text-white shadow-md">
+      <header className="border-b border-emerald-100 bg-white/85 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-teal-500 text-sm font-black text-white shadow-md">
               SA
             </div>
-            <div>
+            <div className="min-w-0">
               <h1 className="text-xl font-black tracking-tight text-slate-900">
                 School Admission
               </h1>
@@ -54,8 +54,8 @@ export default function App() {
               aria-current={view === "student" ? "page" : undefined}
               className={`flex-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition md:flex-none ${
                 view === "student"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-white text-emerald-800 shadow-sm"
+                  : "text-slate-600 hover:text-emerald-700"
               }`}
             >
               Student portal
@@ -66,8 +66,8 @@ export default function App() {
               aria-current={view === "admin" ? "page" : undefined}
               className={`flex-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition md:flex-none ${
                 view === "admin"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-white text-emerald-800 shadow-sm"
+                  : "text-slate-600 hover:text-emerald-700"
               }`}
             >
               Admin console
@@ -76,7 +76,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl space-y-6 px-4 py-7">
+      <main className="mx-auto max-w-7xl space-y-6 px-4 py-7 sm:px-6">
         {view === "student" ? <StudentPortal /> : <AdminPortal />}
 
         <footer className="border-t border-slate-200 pt-5 text-center text-xs text-slate-500">

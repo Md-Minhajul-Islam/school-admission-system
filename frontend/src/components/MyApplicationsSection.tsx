@@ -97,11 +97,11 @@ export function MyApplicationsSection({
             return (
               <li
                 key={hold.holdId}
-                className={`flex items-start justify-between gap-3 rounded-lg px-2 py-3 ${
-                  selected ? "bg-indigo-50/70" : ""
+                className={`flex flex-wrap items-start justify-between gap-3 rounded-lg px-2 py-3 transition ${
+                  selected ? "bg-emerald-50/80" : ""
                 }`}
               >
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 basis-48">
                   <p className="break-words font-medium leading-snug text-slate-900">
                     {hold.className}
                   </p>
@@ -121,7 +121,7 @@ export function MyApplicationsSection({
                       )}
                     </span>
                   </div>
-                  <p className="mt-1 truncate font-mono text-[11px] text-slate-400">
+                  <p className="mt-1 break-all font-mono text-[11px] text-slate-400">
                     {hold.holdId}
                   </p>
                 </div>
@@ -129,10 +129,10 @@ export function MyApplicationsSection({
                   type="button"
                   onClick={() => onSelect(hold.holdId)}
                   aria-pressed={selected}
-                  className={`shrink-0 rounded-lg border px-3 py-1.5 text-xs font-semibold ${
+                  className={`shrink-0 rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
                     selected
-                      ? "border-indigo-300 bg-white text-indigo-700"
-                      : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                      ? "border-emerald-300 bg-white text-emerald-700"
+                      : "border-slate-300 bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"
                   }`}
                 >
                   View

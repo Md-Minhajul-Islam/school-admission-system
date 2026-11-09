@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, errorMessage } from "../api/client";
 import type { ClassSummary, HoldCreated } from "../api/types";
+import { ClassSeatStats } from "./ClassSeatStats";
 import { Notice } from "./Notice";
 
 interface ClassesSectionProps {
@@ -34,7 +35,7 @@ export function ClassesSection({
   });
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold text-slate-900">Open classes</h2>
@@ -89,7 +90,7 @@ export function ClassesSection({
             A school administrator can open the first class from the{" "}
             <a
               href="#admin"
-              className="font-semibold text-indigo-600 hover:underline"
+              className="font-semibold text-emerald-700 hover:underline"
             >
               Admin console
             </a>
@@ -98,7 +99,7 @@ export function ClassesSection({
         </div>
       ) : null}
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+      <div className="mt-5 grid gap-3 xl:grid-cols-2">
         {classes.map((classRoom) => {
           const full = classRoom.availableSeats <= 0;
           const applying =
@@ -107,10 +108,10 @@ export function ClassesSection({
           return (
             <article
               key={classRoom.id}
-              className="flex flex-col rounded-xl border border-slate-200 bg-slate-50/60 p-4 transition hover:border-indigo-200 hover:bg-white"
+              className="flex min-w-0 flex-col rounded-xl border border-slate-200 bg-slate-50/60 p-4 transition hover:border-emerald-200 hover:bg-white"
             >
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="font-semibold leading-snug text-slate-900">
+              <div className="flex min-w-0 items-start justify-between gap-3">
+                <h3 className="min-w-0 break-words font-semibold leading-snug text-slate-900">
                   {classRoom.name}
                 </h3>
                 <span
@@ -124,40 +125,7 @@ export function ClassesSection({
                 </span>
               </div>
 
-              <dl className="mt-4 grid grid-cols-4 gap-2 text-center">
-                <div className="rounded-lg bg-white px-1 py-2 ring-1 ring-slate-200">
-                  <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                    Total
-                  </dt>
-                  <dd className="text-sm font-bold text-slate-900">
-                    {classRoom.totalSeats}
-                  </dd>
-                </div>
-                <div className="rounded-lg bg-white px-1 py-2 ring-1 ring-slate-200">
-                  <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                    Held
-                  </dt>
-                  <dd className="text-sm font-bold text-amber-600">
-                    {classRoom.heldSeats}
-                  </dd>
-                </div>
-                <div className="rounded-lg bg-white px-1 py-2 ring-1 ring-slate-200">
-                  <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                    Confirmed
-                  </dt>
-                  <dd className="text-sm font-bold text-emerald-600">
-                    {classRoom.confirmedSeats}
-                  </dd>
-                </div>
-                <div className="rounded-lg bg-white px-1 py-2 ring-1 ring-slate-200">
-                  <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                    Free
-                  </dt>
-                  <dd className="text-sm font-bold text-indigo-600">
-                    {classRoom.availableSeats}
-                  </dd>
-                </div>
-              </dl>
+              <ClassSeatStats classRoom={classRoom} />
 
               <button
                 type="button"
@@ -166,7 +134,7 @@ export function ClassesSection({
                   mutation.reset();
                   mutation.mutate(classRoom.id);
                 }}
-                className="mt-4 w-full rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600"
+                className="mt-4 w-full rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600"
               >
                 {full
                   ? "No seats available"

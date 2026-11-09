@@ -78,13 +78,14 @@ export function StudentPortal() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <section className="overflow-hidden rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/60 p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-600">
+          <div className="min-w-0">
+            <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100/80 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
               Student portal
-            </p>
-            <h2 className="mt-1 text-lg font-bold text-slate-900">
+            </span>
+            <h2 className="mt-2 text-lg font-bold text-slate-900">
               Find a class and hold your seat
             </h2>
             <p className="mt-1 max-w-xl text-sm text-slate-600">
@@ -101,23 +102,25 @@ export function StudentPortal() {
         </div>
 
         <ol className="mt-5 grid gap-2 text-xs text-slate-600 sm:grid-cols-3">
-          <li className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white">
+          <li className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-white/70 px-3 py-2">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">
               1
             </span>
-            Enter your 17-digit student ID.
+            <span className="min-w-0 leading-snug">Enter your 17-digit student ID.</span>
           </li>
-          <li className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white">
+          <li className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-white/70 px-3 py-2">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">
               2
             </span>
-            Apply for a class to hold a seat.
+            <span className="min-w-0 leading-snug">Apply for a class to hold a seat.</span>
           </li>
-          <li className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white">
+          <li className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-white/70 px-3 py-2">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">
               3
             </span>
-            Pay before the countdown ends to confirm.
+            <span className="min-w-0 leading-snug">
+              Pay before the countdown ends to confirm.
+            </span>
           </li>
         </ol>
       </section>
