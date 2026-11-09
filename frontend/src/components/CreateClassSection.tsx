@@ -9,6 +9,7 @@ import {
   type ClassNumber,
   type ClassShift,
 } from "../lib/classCatalog";
+import { Dropdown, type DropdownOption } from "./Dropdown";
 import { Notice } from "./Notice";
 
 interface CreateClassSectionProps {
@@ -46,6 +47,30 @@ export function CreateClassSection({
   });
 
   const classByName = new Map(classes.map((classRoom) => [classRoom.name, classRoom]));
+  const classOptions: DropdownOption[] = CLASS_NUMBERS.map((candidate) => {
+    const allShiftsCreated = CLASS_SHIFTS.every((candidateShift) =>
+      classByName.has(classNameFor(candidate, candidateShift)),
+    );
+
+    return {
+      value: String(candidate),
+      label: `Class ${candidate}${allShiftsCreated ? " (all shifts created)" : ""}`,
+      disabled: allShiftsCreated,
+    };
+  });
+  const shiftOptions: DropdownOption[] = CLASS_SHIFTS.map((candidate) => {
+    const existing =
+      classNumber === ""
+        ? undefined
+        : classByName.get(classNameFor(classNumber, candidate));
+
+    return {
+      value: candidate,
+      label: `${candidate} Shift${existing ? " (created)" : ""}`,
+      disabled: Boolean(existing),
+    };
+  });
+
   const selectedName =
     classNumber !== "" && shift !== "" ? classNameFor(classNumber, shift) : null;
   const selectedExists = selectedName ? classByName.has(selectedName) : false;
@@ -133,71 +158,46 @@ export function CreateClassSection({
       <form className="mt-5 space-y-5" onSubmit={handleSubmit} noValidate>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="min-w-0">
-            <label htmlFor="class-name" className="text-sm font-semibold text-slate-700">
+            <label
+              id="class-name-label"
+              htmlFor="class-name"
+              className="text-sm font-semibold text-slate-700"
+            >
               Class name
             </label>
-            <div className="relative mt-1.5">
-              <select
+            <div className="mt-1.5">
+              <Dropdown
                 id="class-name"
-                value={classNumber}
-                onChange={(event) => handleClassChange(event.target.value)}
+                labelId="class-name-label"
+                value={classNumber === "" ? "" : String(classNumber)}
+                placeholder="Select a class"
+                options={classOptions}
+                onChange={handleClassChange}
                 disabled={!classesReady || mutation.isPending}
-                className="w-full appearance-none rounded-xl border border-slate-300 bg-white py-2.5 pl-3.5 pr-10 text-sm shadow-sm outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
-              >
-                <option value="">Select a class</option>
-                {CLASS_NUMBERS.map((candidate) => {
-                  const allShiftsCreated = CLASS_SHIFTS.every((candidateShift) =>
-                    classByName.has(classNameFor(candidate, candidateShift)),
-                  );
-
-                  return (
-                    <option
-                      key={candidate}
-                      value={candidate}
-                      disabled={allShiftsCreated}
-                    >
-                      Class {candidate}
-                      {allShiftsCreated ? " (all shifts created)" : ""}
-                    </option>
-                  );
-                })}
-              </select>
-              <SelectChevron />
+              />
             </div>
           </div>
 
           <div className="min-w-0">
-            <label htmlFor="class-shift" className="text-sm font-semibold text-slate-700">
+            <label
+              id="class-shift-label"
+              htmlFor="class-shift"
+              className="text-sm font-semibold text-slate-700"
+            >
               Class shift
             </label>
-            <div className="relative mt-1.5">
-              <select
+            <div className="mt-1.5">
+              <Dropdown
                 id="class-shift"
+                labelId="class-shift-label"
                 value={shift}
-                onChange={(event) => handleShiftChange(event.target.value)}
-                disabled={!classesReady || mutation.isPending || classNumber === ""}
-                className="w-full appearance-none rounded-xl border border-slate-300 bg-white py-2.5 pl-3.5 pr-10 text-sm shadow-sm outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
-              >
-                <option value="">Select a shift</option>
-                {CLASS_SHIFTS.map((candidate) => {
-                  const existing =
-                    classNumber === ""
-                      ? undefined
-                      : classByName.get(classNameFor(classNumber, candidate));
-
-                  return (
-                    <option
-                      key={candidate}
-                      value={candidate}
-                      disabled={Boolean(existing)}
-                    >
-                      {candidate} Shift
-                      {existing ? " (created)" : ""}
-                    </option>
-                  );
-                })}
-              </select>
-              <SelectChevron />
+                placeholder="Select a shift"
+                options={shiftOptions}
+                onChange={handleShiftChange}
+                disabled={
+                  !classesReady || mutation.isPending || classNumber === ""
+                }
+              />
             </div>
           </div>
 
@@ -282,24 +282,5 @@ export function CreateClassSection({
         </button>
       </form>
     </section>
-  );
-}
-
-function SelectChevron() {
-  return (
-    <span
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400"
-    >
-      <svg
-        viewBox="0 0 20 20"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        className="h-4 w-4"
-      >
-        <path d="M6 8l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </span>
   );
 }
