@@ -23,6 +23,9 @@ public sealed class ConcurrencyApiTests
             "Class 10 - Concurrency",
             totalSeats);
 
+        using var samplingCts = new CancellationTokenSource();
+        var peakOccupancy = SamplePeakOccupancyAsync(firstClient, classId, samplingCts.Token);
+
         var start = new TaskCompletionSource(
             TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -44,6 +47,12 @@ public sealed class ConcurrencyApiTests
         start.SetResult();
         var statuses = await Task.WhenAll(requests);
 
+        samplingCts.Cancel();
+        var peak = await peakOccupancy;
+        Assert.True(
+            peak <= totalSeats,
+            $"Observed {peak} held plus confirmed seats for {totalSeats} seats.");
+
         Assert.Equal(totalSeats, statuses.Count(status => status == HttpStatusCode.Created));
         Assert.Equal(
             statuses.Length - totalSeats,
@@ -63,5 +72,24 @@ public sealed class ConcurrencyApiTests
             Assert.Equal(0, view.AvailableSeats);
             Assert.True(view.HeldSeats + view.ConfirmedSeats <= view.TotalSeats);
         }
+    }
+
+    private static async Task<int> SamplePeakOccupancyAsync(
+        HttpClient client,
+        string classId,
+        CancellationToken cancellationToken)
+    {
+        var peak = 0;
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            var view = await ApiAssert.ReadAsync<ApiAssert.ClassSeats>(
+                await client.GetAsync($"/classes/{classId}"));
+
+            peak = Math.Max(peak, view.HeldSeats + view.ConfirmedSeats);
+            await Task.Delay(5, CancellationToken.None);
+        }
+
+        return peak;
     }
 }

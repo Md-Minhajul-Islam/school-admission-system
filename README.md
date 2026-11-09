@@ -180,7 +180,8 @@ The suite contains **46 backend tests**, including:
 - API contract, ownership, idempotency, cancellation, no-seats and invalid-input tests;
 - automatic expiry test;
 - a **two-host concurrency test** that sends 40 simultaneous applications for 5 seats and
-  asserts exactly 5 successes with `heldSeats` never exceeding `totalSeats`.
+  asserts exactly 5 successes, while sampling the class during the run and asserting that
+  `heldSeats + confirmedSeats` never exceeds `totalSeats`.
 
 ### Backend tests on a local machine
 

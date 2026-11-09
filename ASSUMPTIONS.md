@@ -16,7 +16,8 @@ The specification leaves some details open. These are the choices made, and why.
 - **The admin console uses a fixed catalog.** The **Class name** and **Class shift**
   dropdowns offer classes 1 through 10 with Morning and Day shifts. The UI generates names
   such as `Class 6 - Morning Shift` and disables combinations that already exist, so the
-  same class and shift is not created twice from the interface.
+  same class and shift is not created twice from the interface. The API itself does not
+  enforce class-name uniqueness because the brief does not require it.
 - **Seat counts are derived, not stored.** `heldSeats` counts `HELD` holds whose
   `expires_at` is still in the future; `confirmedSeats` counts `CONFIRMED` holds;
   `availableSeats = totalSeats - heldSeats - confirmedSeats`. There is no denormalized
@@ -80,12 +81,14 @@ Additional safeguards:
   disagree about the number of occupied seats.
 - The integration test `Concurrent_applications_from_two_hosts_never_exceed_total_seats`
   runs two API hosts against one database, sends 40 simultaneous applications for 5 seats,
-  and asserts exactly 5 successes, 35 conflicts, and `heldSeats == 5`.
+  samples the class while the requests run, and asserts that occupied seats never exceed
+  the capacity, with exactly 5 successes, 35 conflicts, and `heldSeats == 5` at the end.
 
 ## API behaviour
 
-- `GET /holds/{holdId}` is view-only and does not require the student header. Writes
-  (`confirm`, `cancel`, `apply`, `me/holds`) require a valid `X-Student-Id`.
+- `GET /holds/{holdId}` is intentionally view-only and does not require the student header;
+  the brief only requires an owner check for confirmation. Writes (`confirm`, `cancel`,
+  `apply`, `me/holds`) require a valid `X-Student-Id`.
 - Errors use RFC 7807 Problem Details (`application/problem+json`) with a human-readable
   `detail`. Validation errors also include an `errors` dictionary. HTTP codes:
   `400` invalid input, `403` wrong owner, `404` missing record, `409` unavailable seat /
