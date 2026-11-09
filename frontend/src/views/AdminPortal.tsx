@@ -1,6 +1,13 @@
+import { errorMessage } from "../api/client";
+import { AdminClassesSection } from "../components/AdminClassesSection";
 import { CreateClassSection } from "../components/CreateClassSection";
+import { Notice } from "../components/Notice";
+import { useClassesQuery } from "../hooks/useAdmissionQueries";
 
 export function AdminPortal() {
+  const classesQuery = useClassesQuery();
+  const classes = classesQuery.data ?? [];
+
   return (
     <div className="space-y-6">
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
@@ -11,12 +18,33 @@ export function AdminPortal() {
           Open classes and manage capacity
         </h2>
         <p className="mt-1 max-w-2xl text-sm text-slate-600">
-          Create the classes students can apply for. The student portal stays separate, so
-          admission actions are not mixed with school administration.
+          Pick one of the fixed classes from 1 to 10 and either the Morning or Day shift.
+          Existing combinations are locked, and the student portal stays separate from
+          administration.
         </p>
       </section>
 
-      <CreateClassSection />
+      {classesQuery.error ? (
+        <Notice tone="error" title="We could not load the class list">
+          <p>{errorMessage(classesQuery.error)}</p>
+          <button
+            type="button"
+            onClick={() => {
+              void classesQuery.refetch();
+            }}
+            className="mt-3 rounded-lg border border-rose-300 bg-white px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50"
+          >
+            Try again
+          </button>
+        </Notice>
+      ) : null}
+
+      <CreateClassSection
+        classes={classes}
+        classesReady={!classesQuery.isPending && !classesQuery.error}
+      />
+
+      <AdminClassesSection classes={classes} isPending={classesQuery.isPending} />
     </div>
   );
 }

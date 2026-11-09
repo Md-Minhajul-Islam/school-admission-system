@@ -86,7 +86,14 @@ export function ClassesSection({
         <div className="mt-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-5 py-10 text-center">
           <p className="font-semibold text-slate-800">No classes have been created yet</p>
           <p className="mt-1 text-sm text-slate-500">
-            A school administrator can open the first class with the form below.
+            A school administrator can open the first class from the{" "}
+            <a
+              href="#admin"
+              className="font-semibold text-indigo-600 hover:underline"
+            >
+              Admin console
+            </a>
+            .
           </p>
         </div>
       ) : null}
