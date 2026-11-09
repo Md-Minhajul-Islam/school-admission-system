@@ -5,7 +5,7 @@ using SchoolAdmission.Api.IntegrationTests.Infrastructure;
 using SchoolAdmission.Domain.Enums;
 using SchoolAdmission.Infrastructure.Persistence;
 
-namespace SchoolAdmission.Api.IntegrationTests;
+namespace SchoolAdmission.Api.IntegrationTests.BackgroundServices;
 
 public sealed class ShortHoldApiFactory : AdmissionApiFactory
 {

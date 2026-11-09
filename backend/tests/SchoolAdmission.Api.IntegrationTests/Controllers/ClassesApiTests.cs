@@ -2,9 +2,9 @@ using System.Net;
 using System.Net.Http.Json;
 using SchoolAdmission.Api.IntegrationTests.Infrastructure;
 
-namespace SchoolAdmission.Api.IntegrationTests;
+namespace SchoolAdmission.Api.IntegrationTests.Controllers;
 
-public sealed class ClassApiTests(AdmissionApiFixture factory) : IClassFixture<AdmissionApiFixture>
+public sealed class ClassesApiTests(AdmissionApiFixture factory) : IClassFixture<AdmissionApiFixture>
 {
     private readonly HttpClient _client = factory.CreateClient();
 

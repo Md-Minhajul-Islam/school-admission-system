@@ -1,7 +1,7 @@
 using SchoolAdmission.Domain.Entities;
 using SchoolAdmission.Domain.Enums;
 
-namespace SchoolAdmission.Application.UnitTests.Domain;
+namespace SchoolAdmission.Application.UnitTests.Domain.Entities;
 
 public sealed class HoldTests
 {

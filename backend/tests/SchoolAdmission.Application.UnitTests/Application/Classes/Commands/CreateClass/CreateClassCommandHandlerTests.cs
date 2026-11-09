@@ -4,9 +4,9 @@ using SchoolAdmission.Application.Classes.Commands.CreateClass;
 using SchoolAdmission.Application.Common.Abstractions.Persistence;
 using SchoolAdmission.Domain.Entities;
 
-namespace SchoolAdmission.Application.UnitTests.Handlers;
+namespace SchoolAdmission.Application.UnitTests.Application.Classes.Commands.CreateClass;
 
-public sealed class ClassCommandHandlerTests
+public sealed class CreateClassCommandHandlerTests
 {
     private readonly IClassRoomRepository _classes = Substitute.For<IClassRoomRepository>();
     private readonly IRepository _repository = Substitute.For<IRepository>();

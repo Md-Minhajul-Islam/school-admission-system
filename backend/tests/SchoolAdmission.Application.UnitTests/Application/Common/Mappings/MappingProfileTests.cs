@@ -7,7 +7,7 @@ using SchoolAdmission.Application.Holds.Queries.GetHold;
 using SchoolAdmission.Domain.Entities;
 using SchoolAdmission.Domain.Enums;
 
-namespace SchoolAdmission.Application.UnitTests.Mappings;
+namespace SchoolAdmission.Application.UnitTests.Application.Common.Mappings;
 
 public sealed class MappingProfileTests
 {
