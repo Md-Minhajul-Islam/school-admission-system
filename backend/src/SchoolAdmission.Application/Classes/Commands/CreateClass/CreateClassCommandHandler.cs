@@ -19,7 +19,7 @@ public sealed class CreateClassCommandHandler(
     {
         var classRoom = new ClassRoom(
             Ids.NewClassId(),
-            request.Name,
+            request.Name.Trim(),
             request.TotalSeats,
             timeProvider.GetUtcNow());
 

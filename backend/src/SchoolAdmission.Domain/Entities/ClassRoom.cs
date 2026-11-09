@@ -1,5 +1,3 @@
-using SchoolAdmission.Domain.Exceptions;
-
 namespace SchoolAdmission.Domain.Entities;
 
 public sealed class ClassRoom
@@ -10,28 +8,8 @@ public sealed class ClassRoom
 
     public ClassRoom(string id, string name, int totalSeats, DateTimeOffset createdAt)
     {
-        if (string.IsNullOrWhiteSpace(id))
-        {
-            throw new DomainException("Class id is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new DomainException("Class name is required.");
-        }
-
-        if (name.Trim().Length > 200)
-        {
-            throw new DomainException("Class name must be 200 characters or fewer.");
-        }
-
-        if (totalSeats <= 0)
-        {
-            throw new DomainException("Total seats must be greater than zero.");
-        }
-
         Id = id;
-        Name = name.Trim();
+        Name = name;
         TotalSeats = totalSeats;
         CreatedAt = createdAt;
     }
