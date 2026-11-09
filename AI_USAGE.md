@@ -2,62 +2,57 @@
 
 ## Tools used
 
-- **DeepSeek V4.1 Flash Free** (via the OpenCode coding agent) was used for planning,
+- **DeepSeek V4.1 Flash Free** via the **OpenCode** coding agent: planning,
   scaffolding, implementation, refactoring, test authoring, Docker configuration, and
   documentation.
+- An ad-hoc **Playwright** script drove the real UI against the Docker stack for browser
+  smoke checks. It is not part of the committed test suite.
 
 ## What the AI was used for
 
 - Proposing the Clean Architecture / CQRS layout and project structure.
-- Generating the initial domain entities, commands/queries, handlers, validators,
-  AutoMapper profile, repository ports/implementations, EF Core configurations, migration,
+- Generating the domain entities, commands/queries, handlers, validators, AutoMapper
+  profile, repository ports and implementations, EF Core configurations, migrations,
   middleware, background worker, and API controllers.
 - Writing the unit, integration, expiry, and multi-host concurrency tests.
-- Building the React/TypeScript/Vite/Tailwind UI, countdown/polling logic, runtime
-  configuration, and Docker/nginx setup.
+- Building the React/TypeScript/Vite/Tailwind UI, including polling, countdown logic,
+  runtime configuration, and Docker/nginx setup.
 - Drafting `README.md`, `ASSUMPTIONS.md`, and this file.
 
-All generated code was built, exercised, and reviewed as part of the work; the test suite
-and Docker smoke tests were run after the changes.
+## Verification performed
+
+- `dotnet build` completed with 0 warnings and 0 errors.
+- The backend suite passed: **47 tests** (28 unit + 19 integration), including the two-host
+  concurrency test.
+- `npm test` passed (7 Vitest tests) and `npm run build` completed the TypeScript and Vite
+  production build.
+- `npm audit` reported no vulnerabilities.
+- `docker compose up --build` was exercised against the running API and UI, including a
+  persistence check across `docker compose down` / `up`.
 
 ## Mistakes found and corrected
 
-1. **Vulnerable AutoMapper version** — the first package pin was AutoMapper `14.0.0`.
-   `dotnet restore` reported `NU1903` (high-severity advisory). It was upgraded to
-   `16.3.0`, and the build/restore became clean.
-2. **EF Core assembly version conflict** — `Npgsql.EntityFrameworkCore.PostgreSQL 10.0.3`
-   pulled EF Core Relational `10.0.4` while the project pinned `10.0.14`, producing
-   `MSB3277` warnings. Adding an explicit `Microsoft.EntityFrameworkCore.Relational
-   10.0.14` reference resolved the conflict.
-3. **Missing MVC registration** — the first API build succeeded, but the integration tests
-   failed at startup with “Unable to find the required services… AddControllers”. The AI
-   had mapped controllers without calling `builder.Services.AddControllers()`. Fixed in
-   `Program.cs`; the integration tests now catch this class of startup regression.
-4. **xUnit fixture rule** — xUnit rejected `AdmissionApiFactory` as a class fixture because
-   it had multiple public constructors. A single-constructor `AdmissionApiFixture` wrapper
-   was added.
-5. **Database time precision in a test** — the expiry test compared the creation response
-   timestamp (100 ns ticks) with the value read back from PostgreSQL (microsecond
-   precision). The test now uses a 1 ms tolerance.
-6. **CORS headers lost on errors** — the global exception handler called
-   `Response.Clear()`, which also removed the CORS headers added by `UseCors`. The clear was
-   removed and a regression test now asserts that a `404` response still contains
-   `Access-Control-Allow-Origin`.
-7. **Scalar SQL alias** — PostgreSQL `now()` returned a column named `now`, but EF Core's
-   scalar `SqlQuery<DateTimeOffset>` expects the column to be named `Value`. The query was
-   changed to `SELECT now() AS "Value"`.
-8. **Dev-only npm advisories** — Vitest 3 pulled vulnerable `@vitest/mocker`/`tinypool`
-   versions. Vitest was upgraded to 5.1.0; `npm audit` now reports zero vulnerabilities.
-9. **Clipped applications table and missing favicon** — a browser smoke test (Playwright
-   driving the real UI against the Docker stack) showed the fixed-width “My applications”
-   table cutting off the **View** button and logging a `404` for `/favicon.ico`. The table
-   was replaced with a responsive list, a favicon was added, and the smoke test now reports
-   zero console errors and zero failed requests.
+| # | Mistake | Correction | Found by |
+|---:|---|---|---|
+| 1 | Vulnerable `AutoMapper` package pin | Upgraded to `16.3.0` | `dotnet restore` (`NU1903`) |
+| 2 | EF Core / Npgsql relational package version conflict | Pinned `Microsoft.EntityFrameworkCore.Relational` explicitly | `dotnet build` (`MSB3277`) |
+| 3 | Controllers mapped without `AddControllers()` | Registered MVC services | integration-test startup failure |
+| 4 | xUnit rejected the test factory as a class fixture (multiple public constructors) | Added a single-constructor `AdmissionApiFixture` wrapper | test run |
+| 5 | Expiry test compared API ticks with PostgreSQL microsecond precision | Added a 1 ms tolerance | failing integration test |
+| 6 | `Response.Clear()` removed CORS headers from error responses | Removed the clear; added a regression test | CORS check |
+| 7 | Scalar SQL query returned a column named `now` instead of `Value` | Changed to `SELECT statement_timestamp() AS "Value"` | EF Core exception |
+| 8 | Vulnerable Vitest dev dependencies | Upgraded Vitest to `5.1.0` | `npm audit` |
+| 9 | Fixed-width applications table clipped the View button; `/favicon.ico` returned 404 | Replaced the table with a responsive list and added a favicon | Playwright smoke check |
+| 10 | Class-name uniqueness was case-sensitive | Replaced the index with a functional unique index on `lower(name)` | review and duplicate-name test |
+| 11 | Student IDs were coerced instead of rejected | Added the 17-digit rule and an inline error | review of the input path |
+| 12 | Test files were grouped by test type instead of by the code under test | Mirrored `src` in both test projects and split combined files | review |
+| 13 | UI button labels did not match the brief's quoted labels | Changed them to **Apply**, **Pay Admission Fee**, and **Cancel** | final BRD review |
+| 14 | Enabled buttons showed the default cursor | Added a base-layer CSS rule | UI review |
 
 ## How issues were identified
 
-- Build warnings/errors from `dotnet build`, `dotnet restore`, `tsc`, and `vite build`.
-- Failing xUnit tests (startup DI, fixture rules, timestamp precision, CORS regression).
+- `dotnet build` / `dotnet restore` warnings and errors.
+- Failing xUnit and Vitest tests (startup DI, fixture rules, timestamp precision, CORS).
 - `npm audit`.
-- Manual `docker compose up --build` checks against the running API and frontend, plus a
-  persistence check across `docker compose down` / `up`.
+- A final review of the code, tests, UI, and documentation against the BRD.
+- Manual `docker compose` runs against the API and frontend, including the persistence check.

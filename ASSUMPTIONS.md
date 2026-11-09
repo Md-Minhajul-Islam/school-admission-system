@@ -41,14 +41,15 @@ The specification leaves some details open. These are the choices made, and why.
 - **Owner-only confirmation and cancellation.** The header student must own the hold.
   Attempts by another student return `403`.
 - **Confirmation is idempotent.** The update is guarded by
-  `status = 'HELD' AND expires_at > statement_timestamp()`. If it already succeeded, a second call returns
-  `200` with `CONFIRMED` and does not increase `confirmedSeats` again. Confirming an
-  expired/cancelled application returns `409`.
+  `status = 'HELD' AND expires_at > statement_timestamp()`. If it already succeeded, a
+  second call returns `200` with `CONFIRMED` and does not increase `confirmedSeats` again.
+  Confirming an expired/cancelled application returns `409`.
 - **Cancellation** is allowed only for a live `HELD` application. Repeated cancellation of
   an already cancelled application returns `204` (idempotent). A confirmed admission
   cannot be cancelled (`409`), because the brief does not define a refund/withdrawal
   process.
-- **Payment is simulated.** Pressing “Pay” always succeeds while the hold is active.
+- **Payment is simulated.** Pressing **Pay Admission Fee** always succeeds while the hold is
+  active.
 
 ## Concurrency guarantee (and multiple API processes)
 
@@ -88,8 +89,8 @@ Additional safeguards:
 ## API behaviour
 
 - `GET /holds/{holdId}` is intentionally view-only and does not require the student header;
-  the brief only requires an owner check for confirmation. Writes (`confirm`, `cancel`,
-  `apply`, `me/holds`) require a valid `X-Student-Id`.
+  the brief only requires an owner check for confirmation. Student-scoped calls
+  (`confirm`, `cancel`, `apply`, `me/holds`) require a valid `X-Student-Id`.
 - Errors use RFC 7807 Problem Details (`application/problem+json`) with a human-readable
   `detail`. Validation errors also include an `errors` dictionary. HTTP codes:
   `400` invalid input, `403` wrong owner, `404` missing record, `409` unavailable seat /
@@ -126,9 +127,12 @@ Additional safeguards:
 - Class seat counts poll every 3 seconds, the student's applications every 2 seconds, and
   the selected application every second. Countdowns tick locally once per second.
 - The UI computes `EXPIRED` locally when the countdown reaches zero and disables
-  “Pay admission fee” immediately; the server independently rejects late payment.
+  **Pay Admission Fee** immediately; the server independently rejects late payment.
 - After a reload, the UI loads `GET /me/holds` and automatically selects the newest active
   application (or the most recent application if none is active).
+- The action buttons use the brief's labels: **Apply**, **Pay Admission Fee**, and
+  **Cancel**. Disabled states or the surrounding status panel explain why an action is
+  unavailable.
 - The API base URL is read at runtime from `window.__APP_CONFIG__.API_BASE_URL`. The Docker
   image writes that file from the `API_BASE_URL` environment variable at container start,
   so the same static build works in different environments. `VITE_API_BASE_URL` is a

@@ -51,10 +51,10 @@ Use `docker compose down -v` only when you intentionally want to delete all data
    (**Morning Shift** or **Day Shift**) from the dropdowns, set the seat capacity, and
    create it. Each class and shift is one class with its own seats; reusing an existing
    name through the API (case-insensitive) returns `409 Conflict`.
-4. Back in the **Student portal**, click **Apply for admission** on a class. A seat is held
-   for `HOLD_DURATION_SECONDS` (default 600 seconds).
-5. The **Current application** panel shows a live countdown. Click **Pay admission fee**
-   before it reaches zero to confirm the seat, or **Cancel application** to release it.
+4. Back in the **Student portal**, click **Apply** on a class. A seat is held for
+   `HOLD_DURATION_SECONDS` (default 600 seconds).
+5. The **Current application** panel shows a live countdown. Click **Pay Admission Fee**
+   before it reaches zero to confirm the seat, or **Cancel** to release it.
 6. **My applications** lists every application for the current student. It refreshes
    automatically, as do class seat counts. Expired holds are shown as `EXPIRED`, their seats
    return to the class, and the payment button is disabled without a page reload.
@@ -175,7 +175,7 @@ This starts PostgreSQL, runs the unit and integration tests in a .NET SDK contai
 removes the test container afterwards. The integration tests create and drop isolated
 PostgreSQL databases, so they do not touch application data.
 
-The suite contains **46 backend tests**, including:
+The suite contains **47 backend tests** (28 unit + 19 integration), including:
 
 - domain/validator/mapping/handler unit tests;
 - API contract, ownership, idempotency, cancellation, no-seats and invalid-input tests;
@@ -236,6 +236,7 @@ production build is also type-checked with `tsc`.
 │   └── nginx.conf
 ├── docker-compose.yml
 ├── .env.example
+├── AGENT.md
 ├── ASSUMPTIONS.md
 └── AI_USAGE.md
 ```
