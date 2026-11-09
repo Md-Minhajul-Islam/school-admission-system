@@ -28,10 +28,6 @@ export function AdminPortal() {
               Create a class for each shift and set the seats available to students.
             </p>
           </div>
-          <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-emerald-200 bg-white/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            Administrator
-          </span>
         </div>
       </section>
 
