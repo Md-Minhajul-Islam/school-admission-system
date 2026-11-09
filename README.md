@@ -43,12 +43,14 @@ Use `docker compose down -v` only when you intentionally want to delete all data
 
 ## Using the application
 
-1. Open <http://localhost:3000>.
-2. Enter a **17-digit** student ID (birth registration number) at the top. It is stored in
-   the browser and reused after a refresh.
-3. As a school administrator, create a class with a name and seat capacity.
-4. Click **Apply for admission** on a class. A seat is held for `HOLD_DURATION_SECONDS`
-   (default 600 seconds).
+1. Open <http://localhost:3000>. The header switches between the **Student portal** and
+   the **Admin console**.
+2. In the **Student portal**, enter a **17-digit** student ID (birth registration number).
+   It is stored in the browser and reused after a refresh.
+3. In the **Admin console**, pick a class from 1 to 10, choose **Morning** or **Day**, set
+   the seat capacity, and create it. Each class and shift is one class with its own seats.
+4. Back in the **Student portal**, click **Apply for admission** on a class. A seat is held
+   for `HOLD_DURATION_SECONDS` (default 600 seconds).
 5. The **Current application** panel shows a live countdown. Click **Pay admission fee**
    before it reaches zero to confirm the seat, or **Cancel application** to release it.
 6. **My applications** lists every application for the current student. It refreshes
@@ -168,7 +170,7 @@ This starts PostgreSQL, runs the unit and integration tests in a .NET SDK contai
 removes the test container afterwards. The integration tests create and drop isolated
 PostgreSQL databases, so they do not touch application data.
 
-The suite contains **42 backend tests**, including:
+The suite contains **46 backend tests**, including:
 
 - domain/validator/mapping/handler unit tests;
 - API contract, ownership, idempotency, cancellation, no-seats and invalid-input tests;
@@ -197,8 +199,8 @@ npm test
 npm run build
 ```
 
-Vitest covers the countdown, expiry, and formatting helpers. The production build is also
-type-checked with `tsc`.
+Vitest covers the countdown, expiry, formatting, and the fixed class/shift catalog. The
+production build is also type-checked with `tsc`.
 
 ---
 
@@ -220,9 +222,10 @@ type-checked with `tsc`.
 ├── frontend/
 │   ├── src/
 │   │   ├── api/                             # typed API client and error mapping
-│   │   ├── components/                      # UI sections
+│   │   ├── components/                      # shared UI sections
 │   │   ├── hooks/                           # polling, student ID, clock
-│   │   └── lib/                             # countdown helpers + Vitest tests
+│   │   ├── lib/                             # countdown helpers, class catalog + tests
+│   │   └── views/                           # student and admin portals
 │   ├── Dockerfile
 │   └── nginx.conf
 ├── docker-compose.yml

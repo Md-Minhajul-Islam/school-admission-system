@@ -11,8 +11,12 @@ The specification leaves some details open. These are the choices made, and why.
   in the brief explicitly allow any ID format.
 - **Statuses** are uppercase (`HELD`, `CONFIRMED`, `EXPIRED`, `CANCELLED`) because the
   examples in the brief use uppercase.
-- **A class is a shift.** “Class 6 – Morning Shift” and “Class 6 – Day Shift” are separate
+- **A class is a shift.** "Class 6 - Morning Shift" and "Class 6 - Day Shift" are separate
   classes, each with its own capacity, exactly as required.
+- **The admin console uses a fixed catalog.** Classes 1 through 10 are offered with
+  Morning and Day shifts. The UI generates names such as `Class 6 - Morning Shift` and
+  disables combinations that already exist, so the same class and shift is not created
+  twice from the interface.
 - **Seat counts are derived, not stored.** `heldSeats` counts `HELD` holds whose
   `expires_at` is still in the future; `confirmedSeats` counts `CONFIRMED` holds;
   `availableSeats = totalSeats - heldSeats - confirmedSeats`. There is no denormalized
