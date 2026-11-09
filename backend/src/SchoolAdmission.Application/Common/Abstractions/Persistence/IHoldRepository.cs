@@ -7,6 +7,8 @@ public interface IHoldRepository
 {
     Task AddAsync(Hold hold, CancellationToken ct = default);
 
+    Task<DateTimeOffset> GetDatabaseTimeAsync(CancellationToken ct = default);
+
     Task<int> CountOccupiedSeatsAsync(string classId, CancellationToken ct = default);
 
     Task<bool> HasActiveOrConfirmedAsync(string classId, string studentId, CancellationToken ct = default);

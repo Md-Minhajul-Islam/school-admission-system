@@ -72,8 +72,10 @@ Additional safeguards:
   `CONFIRMED`, so it cannot break the capacity invariant.
 - All comparisons use **PostgreSQL statement time (`statement_timestamp()`)**, not the
   application server clock. This keeps multiple backend processes consistent and avoids a
-  stale transaction timestamp after waiting on the class row lock. Application-side
-  `TimeProvider` is used only to set the initial write timestamps.
+  stale transaction timestamp after waiting on the class row lock. The hold's `created_at`
+  and `expires_at` are also read from PostgreSQL, so its duration does not depend on the
+  API host clock. The application `TimeProvider` is used only for the class creation
+  timestamp.
 - There are no cached counters in memory or in the database, so separate processes cannot
   disagree about the number of occupied seats.
 - The integration test `Concurrent_applications_from_two_hosts_never_exceed_total_seats`

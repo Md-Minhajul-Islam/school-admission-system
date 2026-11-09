@@ -14,8 +14,7 @@ public sealed class CreateHoldCommandHandler(
     IHoldRepository holds,
     IRepository repository,
     IMapper mapper,
-    IOptions<HoldOptions> holdOptions,
-    TimeProvider timeProvider)
+    IOptions<HoldOptions> holdOptions)
     : IRequestHandler<CreateHoldCommand, HoldCreatedDto>
 {
     public Task<HoldCreatedDto> Handle(
@@ -45,7 +44,7 @@ public sealed class CreateHoldCommandHandler(
                 Ids.NewHoldId(),
                 classRoom.Id,
                 request.StudentId,
-                timeProvider.GetUtcNow(),
+                await holds.GetDatabaseTimeAsync(ct),
                 holdOptions.Value.Duration);
 
             await holds.AddAsync(hold, ct);

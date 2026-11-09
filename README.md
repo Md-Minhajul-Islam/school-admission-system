@@ -149,9 +149,10 @@ Two extra safeguards back this up:
 - A partial unique index on `(class_id, student_id) WHERE status IN ('HELD','CONFIRMED')`
   prevents duplicate active applications per student per class.
 
-All time comparisons use PostgreSQL statement time (`statement_timestamp()`), so clock
-differences between API processes do not matter and a request that waited on a row lock
-does not compare expiry against a stale transaction timestamp. A background worker marks
+All time comparisons use PostgreSQL statement time (`statement_timestamp()`), and a hold's
+creation/expiry timestamps are read from PostgreSQL too, so clock differences between API
+processes do not matter and a request that waited on a row lock does not compare expiry
+against a stale transaction timestamp. A background worker marks
 overdue holds as `EXPIRED` every second, and read queries also compute the effective
 status, so expiry is visible even between worker ticks. Confirmation uses a guarded
 `UPDATE ... WHERE status = 'HELD' AND expires_at > statement_timestamp()`, making repeated

@@ -10,6 +10,9 @@ public sealed class HoldRepository(AdmissionDbContext db) : IHoldRepository
     public async Task AddAsync(Hold hold, CancellationToken ct = default)
         => await db.Holds.AddAsync(hold, ct);
 
+    public Task<DateTimeOffset> GetDatabaseTimeAsync(CancellationToken ct = default)
+        => DatabaseTime.NowAsync(db, ct);
+
     public async Task<int> CountOccupiedSeatsAsync(string classId, CancellationToken ct = default)
     {
         var now = await DatabaseTime.NowAsync(db, ct);
