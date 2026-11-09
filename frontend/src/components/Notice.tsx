@@ -41,10 +41,10 @@ export function Notice({ tone, title, children, onDismiss }: NoticeProps) {
         <button
           type="button"
           onClick={onDismiss}
-          className="rounded-md px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wide opacity-70 hover:opacity-100"
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xl leading-none text-rose-600 transition-colors hover:bg-rose-100 hover:text-rose-700"
           aria-label="Dismiss message"
         >
-          Close
+          &times;
         </button>
       ) : null}
     </div>
