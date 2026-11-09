@@ -76,23 +76,28 @@ public sealed class ClassApiTests(AdmissionApiFixture factory) : IClassFixture<A
             new { name, totalSeats = 30 });
         Assert.Equal(HttpStatusCode.Created, first.StatusCode);
 
-        var duplicate = await _client.PostAsJsonAsync(
-            "/classes",
-            new { name, totalSeats = 50 });
+        foreach (var variant in new[] { name, name.ToUpperInvariant() })
+        {
+            var duplicate = await _client.PostAsJsonAsync(
+                "/classes",
+                new { name = variant, totalSeats = 50 });
 
-        Assert.Equal(HttpStatusCode.Conflict, duplicate.StatusCode);
-        Assert.Equal(
-            "application/problem+json",
-            duplicate.Content.Headers.ContentType?.MediaType);
+            Assert.Equal(HttpStatusCode.Conflict, duplicate.StatusCode);
+            Assert.Equal(
+                "application/problem+json",
+                duplicate.Content.Headers.ContentType?.MediaType);
 
-        using var problem = await ApiAssert.ReadJsonAsync(duplicate);
-        Assert.Contains(
-            "already exists",
-            problem.RootElement.GetProperty("detail").GetString());
+            using var problem = await ApiAssert.ReadJsonAsync(duplicate);
+            Assert.Contains(
+                "already exists",
+                problem.RootElement.GetProperty("detail").GetString());
+        }
 
-        var classes = await ApiAssert.ReadAsync<List<ApiAssert.ClassSeats>>(
-            await _client.GetAsync("/classes"));
-        Assert.Single(classes, item => item.Name == name);
+        var onlyClass = Assert.Single(
+            await ApiAssert.ReadAsync<List<ApiAssert.ClassSeats>>(
+                await _client.GetAsync("/classes")),
+            item => item.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        Assert.Equal(name, onlyClass.Name);
     }
 
     [Fact]

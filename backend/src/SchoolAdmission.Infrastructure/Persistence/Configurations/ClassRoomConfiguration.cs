@@ -32,8 +32,7 @@ public sealed class ClassRoomConfiguration : IEntityTypeConfiguration<ClassRoom>
 
         builder.HasIndex(classRoom => classRoom.CreatedAt);
 
-        builder.HasIndex(classRoom => classRoom.Name)
-            .IsUnique()
-            .HasDatabaseName("ux_classes_name");
+        // Class names are unique case-insensitively. EF Core cannot model an index on
+        // lower(name), so it is created in the CaseInsensitiveClassNames migration.
     }
 }

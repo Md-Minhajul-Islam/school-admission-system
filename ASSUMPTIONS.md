@@ -17,8 +17,8 @@ The specification leaves some details open. These are the choices made, and why.
   dropdowns offer classes 1 through 10 with Morning and Day shifts. The UI generates names
   such as `Class 6 - Morning Shift` and disables combinations that already exist, so the
   same class and shift is not created twice from the interface. A unique index on
-  `classes.name` enforces the same rule for direct API callers: a duplicate name returns
-  `409`, and the comparison is case-sensitive.
+  `lower(name)` enforces the same rule for direct API callers: a duplicate name returns
+  `409`, and the comparison is case-insensitive.
 - **Seat counts are derived, not stored.** `heldSeats` counts `HELD` holds whose
   `expires_at` is still in the future; `confirmedSeats` counts `CONFIRMED` holds;
   `availableSeats = totalSeats - heldSeats - confirmedSeats`. There is no denormalized
