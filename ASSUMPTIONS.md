@@ -90,9 +90,11 @@ Additional safeguards:
 
 ## Validation limits
 
-- Class name: required, trimmed, at most 200 characters.
+- Class name: required, trimmed by the Application layer, at most 200 characters.
 - Total seats: whole number from 1 to 10,000. The upper bound is a sanity limit, not from
   the brief.
+- Input validation and normalization are enforced by FluentValidation validators and command
+  handlers in the Application layer. Domain entities only store already-validated values.
 - Unknown/extra JSON properties are ignored by the standard ASP.NET Core binder.
 
 ## Running and persistence

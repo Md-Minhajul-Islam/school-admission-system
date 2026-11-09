@@ -208,7 +208,7 @@ type-checked with `tsc`.
 .
 ├── backend/
 │   ├── src/
-│   │   ├── SchoolAdmission.Domain/          # entities, enums, domain rules
+│   │   ├── SchoolAdmission.Domain/          # entities, enums, and behaviour
 │   │   ├── SchoolAdmission.Application/     # CQRS handlers, validators, ports, mappings
 │   │   ├── SchoolAdmission.Infrastructure/  # EF Core, repositories, migrations
 │   │   └── SchoolAdmission.Api/             # controllers, middleware, worker, startup
@@ -233,6 +233,8 @@ type-checked with `tsc`.
 
 Backend layering: `Domain` ← `Application` ← `Infrastructure` ← `Api`. Repository
 interfaces are defined in `Application`; EF Core lives only in `Infrastructure`.
+Input validation and normalization are handled in `Application` by FluentValidation
+validators and command handlers; domain entities only hold state and behaviour.
 `IRepository` is the transaction/`SaveChanges` port (the assignment's unit-of-work concept
 under the requested name), while `IClassRoomRepository` and `IHoldRepository` are
 aggregate-specific repositories. There is no generic repository.
