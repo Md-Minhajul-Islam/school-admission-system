@@ -52,7 +52,10 @@ public sealed class HoldApiTests(AdmissionApiFixture factory) : IClassFixture<Ad
     [Fact]
     public async Task Only_the_owner_can_confirm_a_hold()
     {
-        var classId = await ApiAssert.CreateClassAsync(_client, totalSeats: 1);
+        var classId = await ApiAssert.CreateClassAsync(
+            _client,
+            "Class 6 - Owner Confirm",
+            totalSeats: 1);
         var hold = await ApplyAsync(classId, "20152691234000002");
 
         var forbidden = await SendAsync(
@@ -69,7 +72,10 @@ public sealed class HoldApiTests(AdmissionApiFixture factory) : IClassFixture<Ad
     [Fact]
     public async Task Cancel_releases_the_seat_and_is_idempotent()
     {
-        var classId = await ApiAssert.CreateClassAsync(_client, totalSeats: 1);
+        var classId = await ApiAssert.CreateClassAsync(
+            _client,
+            "Class 6 - Cancel",
+            totalSeats: 1);
         var hold = await ApplyAsync(classId, "20152691234000004");
 
         var first = await SendAsync(
@@ -96,7 +102,10 @@ public sealed class HoldApiTests(AdmissionApiFixture factory) : IClassFixture<Ad
     [Fact]
     public async Task Another_student_cannot_cancel_a_hold()
     {
-        var classId = await ApiAssert.CreateClassAsync(_client, totalSeats: 1);
+        var classId = await ApiAssert.CreateClassAsync(
+            _client,
+            "Class 6 - Foreign Cancel",
+            totalSeats: 1);
         var hold = await ApplyAsync(classId, "20152691234000005");
 
         var forbidden = await SendAsync(
@@ -110,7 +119,10 @@ public sealed class HoldApiTests(AdmissionApiFixture factory) : IClassFixture<Ad
     [Fact]
     public async Task A_class_cannot_be_overbooked_and_one_student_cannot_apply_twice()
     {
-        var classId = await ApiAssert.CreateClassAsync(_client, totalSeats: 1);
+        var classId = await ApiAssert.CreateClassAsync(
+            _client,
+            "Class 6 - Overbooking",
+            totalSeats: 1);
         var hold = await ApplyAsync(classId, "20152691234000007");
 
         var duplicate = await SendAsync(
@@ -143,7 +155,10 @@ public sealed class HoldApiTests(AdmissionApiFixture factory) : IClassFixture<Ad
     [InlineData("201526912340000001")]
     public async Task Invalid_student_ids_are_rejected(string studentId)
     {
-        var classId = await ApiAssert.CreateClassAsync(_client, totalSeats: 1);
+        var classId = await ApiAssert.CreateClassAsync(
+            _client,
+            $"Class 6 - Invalid Id {studentId}",
+            totalSeats: 1);
 
         var response = await SendAsync(
             HttpMethod.Post,
@@ -156,7 +171,10 @@ public sealed class HoldApiTests(AdmissionApiFixture factory) : IClassFixture<Ad
     [Fact]
     public async Task Missing_student_header_is_rejected_for_writes()
     {
-        var classId = await ApiAssert.CreateClassAsync(_client, totalSeats: 1);
+        var classId = await ApiAssert.CreateClassAsync(
+            _client,
+            "Class 6 - Missing Header",
+            totalSeats: 1);
 
         var response = await _client.PostAsync($"/classes/{classId}/holds", null);
 

@@ -47,6 +47,10 @@ namespace SchoolAdmission.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CreatedAt");
 
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ux_classes_name");
+
                     b.ToTable("classes", null, t =>
                         {
                             t.HasCheckConstraint("ck_classes_total_seats", "total_seats > 0");

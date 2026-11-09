@@ -42,9 +42,14 @@ public sealed class Repository(AdmissionDbContext db) : IRepository
                 SqlState: "23505"
             } postgresException)
         {
-            var message = postgresException.ConstraintName == "ux_holds_active_student_class"
-                ? "You already have an active application or admission in this class."
-                : "The request conflicts with an existing record.";
+            var message = postgresException.ConstraintName switch
+            {
+                "ux_holds_active_student_class" =>
+                    "You already have an active application or admission in this class.",
+                "ux_classes_name" =>
+                    "A class with this name already exists.",
+                _ => "The request conflicts with an existing record."
+            };
 
             throw new ConflictException(message);
         }

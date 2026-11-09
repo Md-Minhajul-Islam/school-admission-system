@@ -31,5 +31,9 @@ public sealed class ClassRoomConfiguration : IEntityTypeConfiguration<ClassRoom>
             .IsRequired();
 
         builder.HasIndex(classRoom => classRoom.CreatedAt);
+
+        builder.HasIndex(classRoom => classRoom.Name)
+            .IsUnique()
+            .HasDatabaseName("ux_classes_name");
     }
 }

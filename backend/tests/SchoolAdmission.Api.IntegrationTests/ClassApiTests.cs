@@ -67,6 +67,35 @@ public sealed class ClassApiTests(AdmissionApiFixture factory) : IClassFixture<A
     }
 
     [Fact]
+    public async Task Create_class_rejects_a_duplicate_name()
+    {
+        const string name = "Class 2 - Day Shift";
+
+        var first = await _client.PostAsJsonAsync(
+            "/classes",
+            new { name, totalSeats = 30 });
+        Assert.Equal(HttpStatusCode.Created, first.StatusCode);
+
+        var duplicate = await _client.PostAsJsonAsync(
+            "/classes",
+            new { name, totalSeats = 50 });
+
+        Assert.Equal(HttpStatusCode.Conflict, duplicate.StatusCode);
+        Assert.Equal(
+            "application/problem+json",
+            duplicate.Content.Headers.ContentType?.MediaType);
+
+        using var problem = await ApiAssert.ReadJsonAsync(duplicate);
+        Assert.Contains(
+            "already exists",
+            problem.RootElement.GetProperty("detail").GetString());
+
+        var classes = await ApiAssert.ReadAsync<List<ApiAssert.ClassSeats>>(
+            await _client.GetAsync("/classes"));
+        Assert.Single(classes, item => item.Name == name);
+    }
+
+    [Fact]
     public async Task Unknown_class_returns_404_and_keeps_cors_headers()
     {
         using var request = new HttpRequestMessage(
