@@ -47,8 +47,9 @@ Use `docker compose down -v` only when you intentionally want to delete all data
    the **Admin console**.
 2. In the **Student portal**, enter a **17-digit** student ID (birth registration number).
    It is stored in the browser and reused after a refresh.
-3. In the **Admin console**, pick a class from 1 to 10, choose **Morning** or **Day**, set
-   the seat capacity, and create it. Each class and shift is one class with its own seats.
+3. In the **Admin console**, choose a **Class name** from 1 to 10 and a **Class shift**
+   (**Morning Shift** or **Day Shift**) from the dropdowns, set the seat capacity, and
+   create it. Each class and shift is one class with its own seats.
 4. Back in the **Student portal**, click **Apply for admission** on a class. A seat is held
    for `HOLD_DURATION_SECONDS` (default 600 seconds).
 5. The **Current application** panel shows a live countdown. Click **Pay admission fee**
