@@ -26,9 +26,8 @@ export function useStudentId() {
   const [studentId, setStudentIdState] = useState<string>(readStoredStudentId);
 
   const setStudentId = useCallback((value: string) => {
-    const digitsOnly = value.replace(/\D/g, "").slice(0, 17);
-    setStudentIdState(digitsOnly);
-    persistStudentId(digitsOnly);
+    setStudentIdState(value);
+    persistStudentId(value);
   }, []);
 
   return {

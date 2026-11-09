@@ -6,6 +6,12 @@ interface StudentIdFieldProps {
 
 export function StudentIdField({ value, isValid, onChange }: StudentIdFieldProps) {
   const showError = value.length > 0 && !isValid;
+  const hasNonDigits = /[^0-9]/.test(value);
+  const errorMessage = hasNonDigits
+    ? "Use digits only — the birth registration number is exactly 17 digits."
+    : value.length > 17
+      ? "Too long — the birth registration number is exactly 17 digits."
+      : `Enter all 17 digits — ${17 - value.length} more to go.`;
 
   return (
     <div className="w-full min-w-0 md:max-w-sm">
@@ -27,7 +33,6 @@ export function StudentIdField({ value, isValid, onChange }: StudentIdFieldProps
           inputMode="numeric"
           autoComplete="off"
           spellCheck={false}
-          maxLength={17}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder="e.g. 20152691234567890"
@@ -54,7 +59,7 @@ export function StudentIdField({ value, isValid, onChange }: StudentIdFieldProps
         className={`mt-1.5 text-xs ${showError ? "font-medium text-rose-600" : "text-slate-500"}`}
       >
         {showError
-          ? `Enter all 17 digits — ${17 - value.length} more to go.`
+          ? errorMessage
           : "Your number is saved in this browser and identifies your applications."}
       </p>
     </div>
