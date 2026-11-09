@@ -1,7 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using SchoolAdmission.Application.Common.Exceptions;
-using SchoolAdmission.Domain.Exceptions;
 
 namespace SchoolAdmission.Api.Middleware;
 

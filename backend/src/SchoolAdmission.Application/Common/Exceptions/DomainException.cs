@@ -1,3 +1,3 @@
-namespace SchoolAdmission.Domain.Exceptions;
+namespace SchoolAdmission.Application.Common.Exceptions;
 
 public sealed class DomainException(string message) : Exception(message);
