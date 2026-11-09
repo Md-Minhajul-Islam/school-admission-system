@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "../config";
+import { syncServerTime } from "../lib/serverTime";
 import type {
   ClassCreated,
   ClassSummary,
@@ -106,6 +107,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
       headers,
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
     });
+    syncServerTime(response.headers.get("date"));
   } catch {
     throw new ApiError(
       0,

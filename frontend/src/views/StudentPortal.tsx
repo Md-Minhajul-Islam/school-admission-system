@@ -47,11 +47,11 @@ export function StudentPortal() {
     }
 
     const active = holds.find(
-      (hold) => effectiveStatus(hold.status, hold.expiresAt) === "HELD",
+      (hold) => effectiveStatus(hold.status, hold.expiresAt, now) === "HELD",
     );
 
     setSelectedHoldId((active ?? holds[0]).holdId);
-  }, [isValid, selectedHoldId, myHoldsQuery.data]);
+  }, [isValid, now, selectedHoldId, myHoldsQuery.data]);
 
   const myHolds = myHoldsQuery.data ?? [];
   const selectedMyHold = selectedHoldId
