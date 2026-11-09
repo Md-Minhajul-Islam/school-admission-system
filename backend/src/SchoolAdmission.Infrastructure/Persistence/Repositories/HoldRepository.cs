@@ -38,7 +38,7 @@ public sealed class HoldRepository(AdmissionDbContext db) : IHoldRepository
 
     public Task<int> ExpireOverdueAsync(CancellationToken ct = default)
         => db.Database.ExecuteSqlInterpolatedAsync(
-            $"UPDATE holds SET status = 'EXPIRED', closed_at = now() WHERE status = 'HELD' AND expires_at <= now()",
+            $"UPDATE holds SET status = 'EXPIRED', closed_at = statement_timestamp() WHERE status = 'HELD' AND expires_at <= statement_timestamp()",
             ct);
 
     public Task<int> ExpireOverdueForStudentAsync(
@@ -46,7 +46,7 @@ public sealed class HoldRepository(AdmissionDbContext db) : IHoldRepository
         string studentId,
         CancellationToken ct = default)
         => db.Database.ExecuteSqlInterpolatedAsync(
-            $"UPDATE holds SET status = 'EXPIRED', closed_at = now() WHERE class_id = {classId} AND student_id = {studentId} AND status = 'HELD' AND expires_at <= now()",
+            $"UPDATE holds SET status = 'EXPIRED', closed_at = statement_timestamp() WHERE class_id = {classId} AND student_id = {studentId} AND status = 'HELD' AND expires_at <= statement_timestamp()",
             ct);
 
     public async Task<bool> ConfirmIfActiveAsync(
@@ -55,7 +55,7 @@ public sealed class HoldRepository(AdmissionDbContext db) : IHoldRepository
         CancellationToken ct = default)
     {
         var affected = await db.Database.ExecuteSqlInterpolatedAsync(
-            $"UPDATE holds SET status = 'CONFIRMED', confirmed_at = now() WHERE id = {holdId} AND student_id = {studentId} AND status = 'HELD' AND expires_at > now()",
+            $"UPDATE holds SET status = 'CONFIRMED', confirmed_at = statement_timestamp() WHERE id = {holdId} AND student_id = {studentId} AND status = 'HELD' AND expires_at > statement_timestamp()",
             ct);
 
         return affected > 0;
@@ -67,7 +67,7 @@ public sealed class HoldRepository(AdmissionDbContext db) : IHoldRepository
         CancellationToken ct = default)
     {
         var affected = await db.Database.ExecuteSqlInterpolatedAsync(
-            $"UPDATE holds SET status = 'CANCELLED', closed_at = now() WHERE id = {holdId} AND student_id = {studentId} AND status = 'HELD' AND expires_at > now()",
+            $"UPDATE holds SET status = 'CANCELLED', closed_at = statement_timestamp() WHERE id = {holdId} AND student_id = {studentId} AND status = 'HELD' AND expires_at > statement_timestamp()",
             ct);
 
         return affected > 0;

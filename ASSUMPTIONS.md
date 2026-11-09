@@ -39,7 +39,7 @@ The specification leaves some details open. These are the choices made, and why.
 - **Owner-only confirmation and cancellation.** The header student must own the hold.
   Attempts by another student return `403`.
 - **Confirmation is idempotent.** The update is guarded by
-  `status = 'HELD' AND expires_at > now()`. If it already succeeded, a second call returns
+  `status = 'HELD' AND expires_at > statement_timestamp()`. If it already succeeded, a second call returns
   `200` with `CONFIRMED` and does not increase `confirmedSeats` again. Confirming an
   expired/cancelled application returns `409`.
 - **Cancellation** is allowed only for a live `HELD` application. Repeated cancellation of
@@ -70,9 +70,10 @@ Additional safeguards:
   enforces the one-active-application rule even if the locking path were bypassed.
 - **Confirmation never adds a seat**: it changes an already-counted `HELD` row to
   `CONFIRMED`, so it cannot break the capacity invariant.
-- All comparisons use **PostgreSQL `now()`**, not the application server clock. This keeps
-  multiple backend processes consistent. Application-side `TimeProvider` is used only to
-  set the initial write timestamps.
+- All comparisons use **PostgreSQL statement time (`statement_timestamp()`)**, not the
+  application server clock. This keeps multiple backend processes consistent and avoids a
+  stale transaction timestamp after waiting on the class row lock. Application-side
+  `TimeProvider` is used only to set the initial write timestamps.
 - There are no cached counters in memory or in the database, so separate processes cannot
   disagree about the number of occupied seats.
 - The integration test `Concurrent_applications_from_two_hosts_never_exceed_total_seats`
