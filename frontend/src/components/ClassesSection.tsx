@@ -142,7 +142,7 @@ export function ClassesSection({
                     ? "Enter your student ID first"
                     : applying
                       ? "Holding a seat…"
-                      : "Apply for admission"}
+                      : "Apply"}
               </button>
             </article>
           );

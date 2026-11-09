@@ -263,7 +263,7 @@ export function ApplicationSection({
           {confirm.isPending && confirm.variables === hold.holdId
             ? "Confirming payment…"
             : isHeld
-              ? "Pay admission fee"
+              ? "Pay Admission Fee"
               : "Payment unavailable"}
         </button>
 
@@ -279,7 +279,7 @@ export function ApplicationSection({
         >
           {cancel.isPending && cancel.variables === hold.holdId
             ? "Cancelling…"
-            : "Cancel application"}
+            : "Cancel"}
         </button>
       </div>
 
