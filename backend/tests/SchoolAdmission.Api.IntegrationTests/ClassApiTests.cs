@@ -67,10 +67,18 @@ public sealed class ClassApiTests(AdmissionApiFixture factory) : IClassFixture<A
     }
 
     [Fact]
-    public async Task Unknown_class_returns_404()
+    public async Task Unknown_class_returns_404_and_keeps_cors_headers()
     {
-        var response = await _client.GetAsync("/classes/c_does_not_exist");
+        using var request = new HttpRequestMessage(
+            HttpMethod.Get,
+            "/classes/c_does_not_exist");
+        request.Headers.Add("Origin", "http://localhost:3000");
+
+        var response = await _client.SendAsync(request);
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.True(
+            response.Headers.TryGetValues("Access-Control-Allow-Origin", out var origins));
+        Assert.Contains("http://localhost:3000", origins);
     }
 }

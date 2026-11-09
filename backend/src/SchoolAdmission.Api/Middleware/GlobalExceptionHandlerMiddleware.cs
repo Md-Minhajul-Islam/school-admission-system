@@ -73,8 +73,8 @@ public sealed class GlobalExceptionHandlerMiddleware(
                 status);
         }
 
-        context.Response.Clear();
         context.Response.StatusCode = status;
+        context.Response.Headers.Remove("Content-Length");
         context.Response.Headers["X-Correlation-Id"] = context.TraceIdentifier;
 
         await context.Response.WriteAsJsonAsync(

@@ -8,9 +8,10 @@ using SchoolAdmission.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException(
-        "ConnectionStrings__DefaultConnection is not configured.");
+        "Set DATABASE_URL or ConnectionStrings__DefaultConnection.");
 
 var holdDurationSeconds = builder.Configuration.GetValue<int?>("HOLD_DURATION_SECONDS") ?? 600;
 if (holdDurationSeconds <= 0)
@@ -19,7 +20,7 @@ if (holdDurationSeconds <= 0)
 }
 
 var corsOrigins = (builder.Configuration["CORS_ORIGINS"]
-        ?? "http://localhost:3000,http://localhost:5173")
+        ?? "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173")
     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
 builder.Services.AddApplication();
