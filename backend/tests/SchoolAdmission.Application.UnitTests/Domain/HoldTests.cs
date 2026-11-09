@@ -1,0 +1,50 @@
+using SchoolAdmission.Domain.Entities;
+using SchoolAdmission.Domain.Enums;
+using SchoolAdmission.Domain.Exceptions;
+
+namespace SchoolAdmission.Application.UnitTests.Domain;
+
+public sealed class HoldTests
+{
+    private const string StudentId = "20152691234567890";
+    private static readonly DateTimeOffset Now = new(2026, 11, 1, 4, 0, 0, TimeSpan.Zero);
+
+    [Fact]
+    public void Create_returns_held_application_with_expiry()
+    {
+        var hold = Hold.Create("h_1", "c_1", StudentId, Now, TimeSpan.FromMinutes(10));
+
+        Assert.Equal(HoldStatus.Held, hold.Status);
+        Assert.Equal(StudentId, hold.StudentId);
+        Assert.Equal(Now.AddMinutes(10), hold.ExpiresAt);
+        Assert.Equal(HoldStatus.Held, hold.EffectiveStatus(Now.AddMinutes(9)));
+    }
+
+    [Fact]
+    public void EffectiveStatus_reports_expired_after_the_deadline_without_being_persisted()
+    {
+        var hold = Hold.Create("h_1", "c_1", StudentId, Now, TimeSpan.FromMinutes(10));
+
+        Assert.True(hold.IsExpired(Now.AddMinutes(10)));
+        Assert.Equal(HoldStatus.Expired, hold.EffectiveStatus(Now.AddMinutes(10)));
+        Assert.Equal(HoldStatus.Held, hold.Status);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("1234")]
+    [InlineData("2015269123456789X")]
+    [InlineData("201526912345678901")]
+    public void Create_rejects_student_ids_that_are_not_seventeen_digits(string studentId)
+    {
+        Assert.Throws<DomainException>(
+            () => Hold.Create("h_1", "c_1", studentId, Now, TimeSpan.FromMinutes(10)));
+    }
+
+    [Fact]
+    public void Create_rejects_non_positive_hold_duration()
+    {
+        Assert.Throws<DomainException>(
+            () => Hold.Create("h_1", "c_1", StudentId, Now, TimeSpan.Zero));
+    }
+}
