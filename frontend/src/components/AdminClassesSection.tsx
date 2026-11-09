@@ -3,9 +3,14 @@ import type { ClassSummary } from "../api/types";
 interface AdminClassesSectionProps {
   classes: ClassSummary[];
   isPending: boolean;
+  hasError: boolean;
 }
 
-export function AdminClassesSection({ classes, isPending }: AdminClassesSectionProps) {
+export function AdminClassesSection({
+  classes,
+  isPending,
+  hasError,
+}: AdminClassesSectionProps) {
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -32,7 +37,7 @@ export function AdminClassesSection({ classes, isPending }: AdminClassesSectionP
         </div>
       ) : null}
 
-      {!isPending && classes.length === 0 ? (
+      {!isPending && !hasError && classes.length === 0 ? (
         <div className="mt-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-5 py-10 text-center">
           <p className="font-semibold text-slate-800">No classes have been created yet</p>
           <p className="mt-1 text-sm text-slate-500">

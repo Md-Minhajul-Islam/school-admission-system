@@ -14,6 +14,7 @@ import { Notice } from "./Notice";
 interface CreateClassSectionProps {
   classes: ClassSummary[];
   classesReady: boolean;
+  classesError: boolean;
 }
 
 interface Selection {
@@ -21,7 +22,11 @@ interface Selection {
   shift: ClassShift;
 }
 
-export function CreateClassSection({ classes, classesReady }: CreateClassSectionProps) {
+export function CreateClassSection({
+  classes,
+  classesReady,
+  classesError,
+}: CreateClassSectionProps) {
   const queryClient = useQueryClient();
   const [selection, setSelection] = useState<Selection | null>(null);
   const [seats, setSeats] = useState("120");
@@ -179,7 +184,9 @@ export function CreateClassSection({ classes, classesReady }: CreateClassSection
 
           {!classesReady ? (
             <p className="mt-3 text-xs font-medium text-amber-700">
-              Loading the existing class list before enabling creation…
+              {classesError
+                ? "The existing class list could not be loaded. Retry it above before creating a class."
+                : "Loading the existing class list before enabling creation…"}
             </p>
           ) : null}
         </fieldset>
@@ -243,7 +250,9 @@ export function CreateClassSection({ classes, classesReady }: CreateClassSection
           {mutation.isPending
             ? "Creating class…"
             : !classesReady
-              ? "Waiting for class list…"
+              ? classesError
+                ? "Class list unavailable"
+                : "Waiting for class list…"
               : !selection
                 ? "Select a class and shift"
                 : selectedExists

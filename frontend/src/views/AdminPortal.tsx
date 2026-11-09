@@ -42,9 +42,14 @@ export function AdminPortal() {
       <CreateClassSection
         classes={classes}
         classesReady={!classesQuery.isPending && !classesQuery.error}
+        classesError={Boolean(classesQuery.error)}
       />
 
-      <AdminClassesSection classes={classes} isPending={classesQuery.isPending} />
+      <AdminClassesSection
+        classes={classes}
+        isPending={classesQuery.isPending}
+        hasError={Boolean(classesQuery.error)}
+      />
     </div>
   );
 }
