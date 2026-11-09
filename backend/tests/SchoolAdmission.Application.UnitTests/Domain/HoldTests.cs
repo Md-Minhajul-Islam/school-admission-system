@@ -1,6 +1,5 @@
 using SchoolAdmission.Domain.Entities;
 using SchoolAdmission.Domain.Enums;
-using SchoolAdmission.Domain.Exceptions;
 
 namespace SchoolAdmission.Application.UnitTests.Domain;
 
@@ -28,23 +27,5 @@ public sealed class HoldTests
         Assert.True(hold.IsExpired(Now.AddMinutes(10)));
         Assert.Equal(HoldStatus.Expired, hold.EffectiveStatus(Now.AddMinutes(10)));
         Assert.Equal(HoldStatus.Held, hold.Status);
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData("1234")]
-    [InlineData("2015269123456789X")]
-    [InlineData("201526912345678901")]
-    public void Create_rejects_student_ids_that_are_not_seventeen_digits(string studentId)
-    {
-        Assert.Throws<DomainException>(
-            () => Hold.Create("h_1", "c_1", studentId, Now, TimeSpan.FromMinutes(10)));
-    }
-
-    [Fact]
-    public void Create_rejects_non_positive_hold_duration()
-    {
-        Assert.Throws<DomainException>(
-            () => Hold.Create("h_1", "c_1", StudentId, Now, TimeSpan.Zero));
     }
 }

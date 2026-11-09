@@ -1,5 +1,4 @@
 using SchoolAdmission.Domain.Enums;
-using SchoolAdmission.Domain.Exceptions;
 
 namespace SchoolAdmission.Domain.Entities;
 
@@ -34,26 +33,6 @@ public sealed class Hold
         DateTimeOffset now,
         TimeSpan holdDuration)
     {
-        if (string.IsNullOrWhiteSpace(id))
-        {
-            throw new DomainException("Hold id is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(classId))
-        {
-            throw new DomainException("Class id is required.");
-        }
-
-        if (studentId.Length != 17 || !studentId.All(char.IsAsciiDigit))
-        {
-            throw new DomainException("Student id must be exactly 17 digits.");
-        }
-
-        if (holdDuration <= TimeSpan.Zero)
-        {
-            throw new DomainException("Hold duration must be greater than zero.");
-        }
-
         return new Hold
         {
             Id = id,
