@@ -72,3 +72,21 @@ For multi-step tasks, state a brief plan:
   UI labels, ports, and environment variables.
 - **Report** — Surface failures and tradeoffs plainly; never claim a check passed without
   running it.
+
+## 6. Local Commits
+
+**Commit as you go. Keep every commit small and self-explanatory.**
+
+After completing a coherent change, commit it to git **locally** (do not push unless asked):
+
+- **One concern per commit.** Split unrelated edits into separate commits; never bundle
+  several features, refactors, or a code change plus unrelated docs into one commit.
+- **Conventional Commits format** for the subject line:
+  `type(scope): imperative summary` — for example `fix(backend): reject seats above the limit`.
+  Common types: `feat`, `fix`, `refactor`, `test`, `docs`, `style`, `chore`, `perf`, `build`.
+  Keep the subject under ~72 characters, lowercase, no trailing period.
+- **Explain what and why in the body.** Say what changed, why it was needed, and any
+  tradeoff or follow-up. The diff already shows *how*; the message must show *intent*.
+- **Verify before committing.** Only commit once the relevant build/tests pass, and never
+  commit secrets, generated artifacts, or unrelated working-tree changes.
+- **Report each commit** (hash + subject) in the final response so the user can review it.
