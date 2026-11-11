@@ -13,7 +13,7 @@ public sealed class CreateClassCommandValidator : AbstractValidator<CreateClassC
 
         RuleFor(command => command.TotalSeats)
             .GreaterThan(0)
-            .LessThanOrEqualTo(10_000)
+            .LessThanOrEqualTo(10000)
             .WithMessage("Total seats must be between 1 and 10000.");
     }
 }
