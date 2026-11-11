@@ -101,6 +101,26 @@ public sealed class ClassesApiTests(AdmissionApiFixture factory) : IClassFixture
     }
 
     [Fact]
+    public async Task Cors_exposes_the_date_header_used_for_clock_sync()
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/classes");
+        request.Headers.Add("Origin", "http://localhost:3000");
+
+        var response = await _client.SendAsync(request);
+
+        Assert.True(
+            response.Headers.TryGetValues("Access-Control-Expose-Headers", out var exposed));
+        var names = exposed
+            .SelectMany(value => value.Split(',', StringSplitOptions.TrimEntries))
+            .ToArray();
+
+        // Date is not a CORS-safelisted response header, so the browser can only read it
+        // when it is listed explicitly. The UI needs it to estimate the server clock.
+        Assert.Contains("Date", names, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("X-Correlation-Id", names, StringComparer.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task Unknown_class_returns_404_and_keeps_cors_headers()
     {
         using var request = new HttpRequestMessage(

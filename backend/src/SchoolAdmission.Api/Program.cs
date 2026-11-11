@@ -38,7 +38,7 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
     policy.WithOrigins(corsOrigins)
         .AllowAnyHeader()
         .AllowAnyMethod()
-        .WithExposedHeaders("X-Correlation-Id")));
+        .WithExposedHeaders("X-Correlation-Id", "Date")));
 
 builder.Services.AddHostedService<HoldExpiryWorker>();
 
