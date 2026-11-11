@@ -9,6 +9,7 @@ using SchoolAdmission.Domain.Entities;
 
 namespace SchoolAdmission.Application.Holds.Commands.CreateHold;
 
+// Start → lock the class → expire old holds → duplicate? reject → full? reject → create hold → save → done.
 public sealed class CreateHoldCommandHandler(
     IClassRoomRepository classes,
     IHoldRepository holds,
