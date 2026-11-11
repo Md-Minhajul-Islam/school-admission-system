@@ -22,13 +22,18 @@
 ## Verification performed
 
 - `dotnet build` completed with 0 warnings and 0 errors.
-- The backend suite passed: **47 tests** (28 unit + 19 integration), including the two-host
-  concurrency test.
+- The backend suite passed: **48 tests** (28 unit + 20 integration), including the two-host
+  concurrency test. The full run used the supported container path
+  (`docker compose --profile test run --rm --build backend-tests`).
 - `npm test` passed (7 Vitest tests) and `npm run build` completed the TypeScript and Vite
   production build.
-- `npm audit` reported no vulnerabilities.
+- `npm audit` and
+  `dotnet list backend/SchoolAdmission.sln package --vulnerable --include-transitive`
+  reported no vulnerabilities.
 - `docker compose up --build` was exercised against the running API and UI, including a
   persistence check across `docker compose down` / `up`.
+- Live checks against the running stack: `/health`, the runtime `config.js`, a CORS
+  preflight, and a `404` Problem Details response that still carries CORS headers.
 
 ## Mistakes found and corrected
 
@@ -48,6 +53,7 @@
 | 12 | Test files were grouped by test type instead of by the code under test | Mirrored `src` in both test projects and split combined files | review |
 | 13 | UI button labels did not match the brief's quoted labels | Changed them to **Apply**, **Pay Admission Fee**, and **Cancel** | final BRD review |
 | 14 | Enabled buttons showed the default cursor | Added a base-layer CSS rule | UI review |
+| 15 | The UI synced its clock from the HTTP `Date` header, but CORS exposed only `X-Correlation-Id`. `Date` is not a CORS-safelisted response header, so the sync silently fell back to the local clock | Added `Date` to `WithExposedHeaders` and an integration assertion | live CORS-header inspection |
 
 ## How issues were identified
 
@@ -56,3 +62,15 @@
 - `npm audit`.
 - A final review of the code, tests, UI, and documentation against the BRD.
 - Manual `docker compose` runs against the API and frontend, including the persistence check.
+- Inspecting live response headers, which is how the missing CORS exposure of `Date` was
+  found: the tests and the UI both worked, but only the browser's header visibility rules
+  made the clock sync a no-op.
+
+## Known non-issues
+
+- Docker logs show a Lucky Penny AutoMapper license warning because the container runs in
+  the `Production` environment. AutoMapper 16 is free for development and testing; a paid
+  license is only required for a production deployment.
+- The backend probes `libgssapi_krb5.so.2` at startup and logs that it cannot load it. The
+  Debian runtime image does not ship Kerberos, and PostgreSQL uses password authentication,
+  so database connectivity and `/health` are unaffected.

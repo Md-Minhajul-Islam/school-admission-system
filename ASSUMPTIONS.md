@@ -6,7 +6,8 @@ The specification leaves some details open. These are the choices made, and why.
 
 - **Student identity** is exactly 17 ASCII digits, sent in `X-Student-Id`. No checksum is
   enforced because the brief only defines the format. Empty, shorter, longer, or
-  non-numeric values return `400`.
+  non-numeric values return `400`. Surrounding whitespace in the header value is trimmed
+  before validation, so a padded but otherwise valid ID is accepted.
 - **IDs** are opaque strings (`c_` + GUID for classes, `h_` + GUID for holds). The examples
   in the brief explicitly allow any ID format.
 - **Statuses** are uppercase (`HELD`, `CONFIRMED`, `EXPIRED`, `CANCELLED`) because the
@@ -23,6 +24,12 @@ The specification leaves some details open. These are the choices made, and why.
   `expires_at` is still in the future; `confirmedSeats` counts `CONFIRMED` holds;
   `availableSeats = totalSeats - heldSeats - confirmedSeats`. There is no denormalized
   counter that could drift from the holds table.
+- **Classes are immutable.** The brief only asks for creating classes, so there is no
+  edit or delete endpoint. A class stays available for applications indefinitely.
+- **Lists are not paginated.** `GET /classes` and `GET /me/holds` return complete lists
+  because the expected data volume is small; no paging parameters are defined.
+- **History is retained.** `EXPIRED` and `CANCELLED` holds stay in the database so students
+  can see past applications; no retention or purge job is implemented.
 
 ## Hold lifecycle
 
@@ -99,6 +106,8 @@ Additional safeguards:
 - `DELETE /holds/{id}` returns `204`.
 - `expiresAt` is serialized as UTC (`Z`).
 - CORS is enabled for the configured frontend origin(s), including on error responses.
+  `X-Correlation-Id` and `Date` are exposed to browser JavaScript; `Date` is needed for the
+  UI clock estimate because it is not a CORS-safelisted response header.
 
 ## Validation limits
 
@@ -118,14 +127,29 @@ Additional safeguards:
 - Migrations run automatically at backend startup under a PostgreSQL advisory lock, with
   retries while the database starts. This avoids races when multiple backend containers
   start together.
+- **Credentials are configured twice.** `POSTGRES_USER`, `POSTGRES_PASSWORD`, and
+  `POSTGRES_DB` configure the database container, while the backend connects through
+  `DATABASE_URL` and the tests through `TEST_DATABASE_URL`. Changing the container
+  credentials requires updating those connection strings to match; otherwise the backend
+  cannot authenticate.
+- **AutoMapper licensing.** The pinned AutoMapper 16.3.0 is free for development and
+  testing. A production deployment would need a Lucky Penny license; the only visible
+  effect here is a startup warning in the `Production` container.
 - There is no seed data. Classes are created through the UI/API.
 
 ## Frontend
 
 - The 17-digit student ID is persisted in `localStorage`, so it survives refreshes and
   browser restarts. Changing the ID immediately switches the visible applications.
+- **Countdowns use the server clock.** Every API response refreshes an offset from the HTTP
+  `Date` header, and the UI adds that offset to the local time. If the header is
+  unavailable, it falls back to the local clock. The backend decides expiry, so a skewed
+  client clock only affects the displayed countdown, never the admission outcome.
 - Class seat counts poll every 3 seconds, the student's applications every 2 seconds, and
   the selected application every second. Countdowns tick locally once per second.
+- The admin form disables combinations that already exist by comparing the generated name
+  against the loaded class list with an exact match. The API is authoritative and rejects
+  any case-insensitive duplicate with `409`.
 - The UI computes `EXPIRED` locally when the countdown reaches zero and disables
   **Pay Admission Fee** immediately; the server independently rejects late payment.
 - After a reload, the UI loads `GET /me/holds` and automatically selects the newest active

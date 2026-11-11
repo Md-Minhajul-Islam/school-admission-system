@@ -84,6 +84,10 @@ Copy `.env.example` to `.env` to override any default. All variables are optiona
 If you change `BACKEND_PORT`, also set `API_BASE_URL` to the matching URL. If you change
 `FRONTEND_PORT`, add the new origin to `CORS_ORIGINS`.
 
+If you change `POSTGRES_USER`, `POSTGRES_PASSWORD`, or `POSTGRES_DB`, also update the
+credentials inside `DATABASE_URL` (and `TEST_DATABASE_URL`). The `POSTGRES_*` values only
+configure the database container; the backend reads the connection string.
+
 The API also reads the standard ASP.NET Core key `ConnectionStrings__DefaultConnection`
 when `DATABASE_URL` is not set, so the backend can be run outside Docker.
 
@@ -175,7 +179,7 @@ This starts PostgreSQL, runs the unit and integration tests in a .NET SDK contai
 removes the test container afterwards. The integration tests create and drop isolated
 PostgreSQL databases, so they do not touch application data.
 
-The suite contains **47 backend tests** (28 unit + 19 integration), including:
+The suite contains **48 backend tests** (28 unit + 20 integration), including:
 
 - domain/validator/mapping/handler unit tests;
 - API contract, ownership, idempotency, cancellation, no-seats and invalid-input tests;
